@@ -3,6 +3,13 @@ from sklearn.manifold import TSNE
 from sklearn.base import BaseEstimator, ClusterMixin, _fit_context
 from sklearn.neighbors import NearestNeighbors
 from sklearn.utils.validation import check_array, check_is_fitted, validate_data
+from sklearn.utils._param_validation import (
+    Interval,
+    StrOptions,
+    Real,
+    Integral,
+    Boolean,
+)
 
 from scipy.sparse import csr_matrix
 
@@ -53,7 +60,16 @@ class DenMune(BaseEstimator, ClusterMixin):
     """
 
     # TODO: Add proper validation, check TSNE class definition for hints
-    _parameter_constraints: dict = {}
+    _parameter_constraints: dict = {
+        "k_nearest": [Interval(Integral, 1, None, closed="left")],
+        "reduce_dims": [Boolean],
+        "target_dims": [Interval(Integral, 1, None, closed="left")],
+        "dim_reducer": [StrOptions({"tsne", "pca", "umap"}), BaseEstimator],
+        "dim_reducer_args": [dict, None],
+        "metric": [str],
+        "n_jobs": [Integral, None],
+        "random_state": ["random_state"],
+    }
 
     def __init__(
         self,
