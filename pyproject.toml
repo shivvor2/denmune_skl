@@ -13,14 +13,22 @@ description = "A template for scikit-learn compatible packages."
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-  "scikit-learn>=1.4.2",
+    "numpy",
+    "scipy",
+    "scikit-learn",
 ]
 classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Topic :: Software Development",
+    "Topic :: Scientific/Engineering",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: BSD License",
     "Operating System :: POSIX",
     "Operating System :: Unix",
@@ -29,8 +37,15 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/scikit-learn-contrib/project-template"
-Issues = "https://github.com/scikit-learn-contrib/project-template/issues"
+"Homepage" = "https://github.com/shivvor2/denmune-skl"
+"Bug Tracker" = "https://github.com/shivvor2/denmune-skl/issues"
+"Documentation" = "https://shivvor2.github.io/denmune-skl/"
+"Source Code" = "https://github.com/shivvor2/denmune-skl"
+
+[tool.setuptools.packages.find]
+where = ["."]
+# This tells the build system to look for the 'denmune_skl' directory.
+include = ["denmune_skl*"]
 
 [tool.setuptools_scm]
 version_file = "skltemplate/_version.py"
@@ -86,7 +101,7 @@ dev = ["doc", "lint", "test"]
 
 [tool.black]
 line-length = 88
-target_version = ['py38', 'py39', 'py310']
+target-version = ["py39", "py310", "py311", "py312", "py313"]
 preview = true
 exclude = '''
 /(
@@ -98,17 +113,21 @@ exclude = '''
 force-exclude = "skltemplate/_version.py"
 
 [tool.ruff]
-# max line length for black
 line-length = 88
-target-version = "py38"
-exclude=[
-    ".git",
-    "__pycache__",
-    "dist",
-    "doc/_build",
-    "doc/auto_examples",
-    "build",
-    "skltemplate/_version.py",
+select = [
+    "C", "E", "F", "W", "I", "N", "D", "B", "A", "RUF", "S",
+    "T20", "SIM", "ARG", "PTH", "PD", "PGH", "PIE", "PL",
+    "TRY", "UP", "YTT"
+]
+ignore = [
+    # D203: 1 blank line required before class docstring
+    "D203",
+    # D213: Multi-line docstring summary should start at the second line
+    "D213",
+    # D401: First line should be in imperative mood
+    "D401",
+    # D415: First line should end with a period
+    "D415",
 ]
 
 [tool.ruff.lint]
@@ -129,6 +148,10 @@ ignore=[
 "examples/*"=["E402"]
 "doc/conf.py"=["E402"]
 "doc/_templates/numpydoc_docstring.py"=["F821", "W292"]
+# Tests can be less strict
+"denmune/tests/*" = ["D", "S101", "ARG001"]
+# Allow relative imports in __init__.py
+"denmune/__init__.py" = ["F401"]
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules --color=yes"

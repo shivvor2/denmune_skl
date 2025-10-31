@@ -12,6 +12,9 @@ doc/auto_examples/
 doc/modules/generated/
 doc/datasets/generated/
 
+# IDE specific
+.vscode/
+
 # Distribution / packaging
 
 .Python
