@@ -1,180 +1,84 @@
-.. title:: User guide : contents
-
 .. _user_guide:
 
 ==========
 User Guide
 ==========
 
-Estimator
----------
+This guide provides a detailed overview of the DenMune algorithm, its implementation
+details, and practical usage tips.
 
-The central piece of transformer, regressor, and classifier is
-:class:`sklearn.base.BaseEstimator`. All estimators in scikit-learn are derived
-from this class. In more details, this base class enables to set and get
-parameters of the estimator. It can be imported as::
+.. contents::
+   :local:
 
-    >>> from sklearn.base import BaseEstimator
+Motivation for this Implementation
+----------------------------------
+This version of DenMune was developed as a clean-room rewrite to provide a robust,
+performant, and scikit-learn compatible estimator. The previous implementation
+available on PyPI had several architectural issues that hindered its practical use,
+including:
 
-Once imported, you can create a class which inherate from this base class::
+- **Lack of Scikit-learn Compatibility**: The legacy class did not inherit from
+  `BaseEstimator`, preventing its use in standard scikit-learn tools like
+  ``Pipeline`` and ``GridSearchCV``. `Our implementation <[INSERT GIT PERMALINK TO YOUR denmune.py]>`_
+  is a proper scikit-learn estimator.
+- **Algorithmic Flaws**: The previous version improperly mixed training and testing data,
+  leading to data leakage and invalid evaluation metrics. This implementation adheres to
+  the standard `fit`/`predict` paradigm.
+- **Performance Bottlenecks**: Core logic relied on slow Python loops. This implementation
+  uses a vectorized, sparse-graph approach for significant speed-up.
 
-    >>> class MyOwnEstimator(BaseEstimator):
-    ...     pass
+How DenMune Works
+-----------------
+DenMune is a density-based algorithm that identifies clusters by finding density
+peaks and expanding from them based on mutual nearest neighbors. It operates in
+two main phases after an initial density estimation.
 
-Transformer
------------
+**1. Density Estimation**
 
-Transformers are scikit-learn estimators which implement a ``transform`` method.
-The use case is the following:
+For each point `p`, the algorithm computes two key sets based on its `k_nearest` neighbors:
+- The **Refer-To List (`KNN_p->`)**: The `k` points closest to `p`.
+- The **Reference-List (`KNN_p<-`)**: The set of points that consider `p` to be one of their `k` nearest neighbors.
 
-* at ``fit``, some parameters can be learned from ``X`` and ``y``;
-* at ``transform``, `X` will be transformed, using the parameters learned
-  during ``fit``.
+The size of the Reference-List, `|KNN_p<-|`, serves as the density score for point `p`.
 
-.. _mixin: https://en.wikipedia.org/wiki/Mixin
+**2. Phase I: Cluster Skeleton Construction**
 
-In addition, scikit-learn provides a
-mixin_, i.e. :class:`sklearn.base.TransformerMixin`, which
-implement the combination of ``fit`` and ``transform`` called ``fit_transform``.
+Points are classified based on their density:
+- **Strong Points**: Points where `|KNN_p<-| >= k_nearest`. These are density peaks and
+  serve as the initial seeds for clusters.
+- **Weak Points**: Points where `|KNN_p<-| < k_nearest`. These are boundary points or noise.
+- **Noise Points**: Points with few or no mutual neighbors.
 
-One can import the mixin class as::
+The algorithm iterates through the strong points in descending order of density. Each strong
+point forms a new cluster or is merged with an existing cluster skeleton using a
+Union-Find data structure for efficiency. Merging is decided by a majority vote
+among its already-classified mutual neighbors.
 
-    >>> from sklearn.base import TransformerMixin
+**3. Phase II: Weak Point Assignment**
 
-Therefore, when creating a transformer, you need to create a class which
-inherits from both :class:`sklearn.base.BaseEstimator` and
-:class:`sklearn.base.TransformerMixin`. The scikit-learn API imposed ``fit`` to
-**return ``self``**. The reason is that it allows to pipeline ``fit`` and
-``transform`` imposed by the :class:`sklearn.base.TransformerMixin`. The
-``fit`` method is expected to have ``X`` and ``y`` as inputs. Note that
-``transform`` takes only ``X`` as input and is expected to return the
-transformed version of ``X``::
+After the skeletons are formed, the algorithm iteratively attempts to assign the
+remaining weak points. A weak point is assigned to the cluster that has the
+majority representation among its mutual neighbors. Points that cannot be assigned
+are labeled as noise (`-1`).
 
-    >>> class MyOwnTransformer(TransformerMixin, BaseEstimator):
-    ...     def fit(self, X, y=None):
-    ...         return self
-    ...     def transform(self, X):
-    ...         return X
+Practical Usage and Parameters
+------------------------------
 
-We build a basic example to show that our :class:`MyOwnTransformer` is working
-within a scikit-learn ``pipeline``::
+**Choosing `k_nearest`**
 
-    >>> from sklearn.datasets import load_iris
-    >>> from sklearn.pipeline import make_pipeline
-    >>> from sklearn.linear_model import LogisticRegression
-    >>> X, y = load_iris(return_X_y=True)
-    >>> pipe = make_pipeline(MyOwnTransformer(),
-    ...                      LogisticRegression(random_state=10,
-    ...                                         solver='lbfgs'))
-    >>> pipe.fit(X, y)  # doctest: +ELLIPSIS
-    Pipeline(...)
-    >>> pipe.predict(X)  # doctest: +ELLIPSIS
-    array([...])
+The `k_nearest` parameter is the most important hyperparameter. It controls the
+granularity of the density estimation.
+- A **small `k`** may cause dense clusters to be fragmented.
+- A **large `k`** may cause distinct but close clusters to be merged.
+The paper suggests the algorithm is stable over a wide range of `k`. You can
+investigate this for your dataset as shown in our :ref:`sphx_glr_auto_examples_plot_k_sensitivity.py` example.
 
-Predictor
----------
+**Dimensionality Reduction**
 
-Regressor
-~~~~~~~~~
-
-Similarly, regressors are scikit-learn estimators which implement a ``predict``
-method. The use case is the following:
-
-* at ``fit``, some parameters can be learned from ``X`` and ``y``;
-* at ``predict``, predictions will be computed using ``X`` using the parameters
-  learned during ``fit``.
-
-In addition, scikit-learn provides a mixin_, i.e.
-:class:`sklearn.base.RegressorMixin`, which implements the ``score`` method
-which computes the :math:`R^2` score of the predictions.
-
-One can import the mixin as::
-
-    >>> from sklearn.base import RegressorMixin
-
-Therefore, we create a regressor, :class:`MyOwnRegressor` which inherits from
-both :class:`sklearn.base.BaseEstimator` and
-:class:`sklearn.base.RegressorMixin`. The method ``fit`` gets ``X`` and ``y``
-as input and should return ``self``. It should implement the ``predict``
-function which should output the predictions of your regressor::
-
-    >>> import numpy as np
-    >>> class MyOwnRegressor(RegressorMixin, BaseEstimator):
-    ...     def fit(self, X, y):
-    ...         return self
-    ...     def predict(self, X):
-    ...         return np.mean(X, axis=1)
-
-We illustrate that this regressor is working within a scikit-learn pipeline::
-
-    >>> from sklearn.datasets import load_diabetes
-    >>> X, y = load_diabetes(return_X_y=True)
-    >>> pipe = make_pipeline(MyOwnTransformer(), MyOwnRegressor())
-    >>> pipe.fit(X, y)  # doctest: +ELLIPSIS
-    Pipeline(...)
-    >>> pipe.predict(X)  # doctest: +ELLIPSIS
-    array([...])
-
-Since we inherit from the :class:`sklearn.base.RegressorMixin`, we can call
-the ``score`` method which will return the :math:`R^2` score::
-
-    >>> pipe.score(X, y)  # doctest: +ELLIPSIS
-    -3.9...
-
-Classifier
-~~~~~~~~~~
-
-Similarly to regressors, classifiers implement ``predict``. In addition, they
-output the probabilities of the prediction using the ``predict_proba`` method:
-
-* at ``fit``, some parameters can be learned from ``X`` and ``y``;
-* at ``predict``, predictions will be computed using ``X`` using the parameters
-  learned during ``fit``. The output corresponds to the predicted class for each sample;
-* ``predict_proba`` will give a 2D matrix where each column corresponds to the
-  class and each entry will be the probability of the associated class.
-
-In addition, scikit-learn provides a mixin, i.e.
-:class:`sklearn.base.ClassifierMixin`, which implements the ``score`` method
-which computes the accuracy score of the predictions.
-
-One can import this mixin as::
-
-    >>> from sklearn.base import ClassifierMixin
-
-Therefore, we create a classifier, :class:`MyOwnClassifier` which inherits
-from both :class:`slearn.base.BaseEstimator` and
-:class:`sklearn.base.ClassifierMixin`. The method ``fit`` gets ``X`` and ``y``
-as input and should return ``self``. It should implement the ``predict``
-function which should output the class inferred by the classifier.
-``predict_proba`` will output some probabilities instead::
-
-    >>> class MyOwnClassifier(ClassifierMixin, BaseEstimator):
-    ...     def fit(self, X, y):
-    ...         self.classes_ = np.unique(y)
-    ...         return self
-    ...     def predict(self, X):
-    ...         return np.random.randint(0, self.classes_.size,
-    ...                                  size=X.shape[0])
-    ...     def predict_proba(self, X):
-    ...         pred = np.random.rand(X.shape[0], self.classes_.size)
-    ...         return pred / np.sum(pred, axis=1)[:, np.newaxis]
-
-We illustrate that this regressor is working within a scikit-learn pipeline::
-
-    >>> X, y = load_iris(return_X_y=True)
-    >>> pipe = make_pipeline(MyOwnTransformer(), MyOwnClassifier())
-    >>> pipe.fit(X, y)  # doctest: +ELLIPSIS
-    Pipeline(...)
-
-Then, you can call ``predict`` and ``predict_proba``::
-
-    >>> pipe.predict(X)  # doctest: +ELLIPSIS
-    array([...])
-    >>> pipe.predict_proba(X)  # doctest: +ELLIPSIS
-    array([...])
-
-Since our classifier inherits from :class:`sklearn.base.ClassifierMixin`, we
-can compute the accuracy by calling the ``score`` method::
-
-    >>> pipe.score(X, y)  # doctest: +ELLIPSIS
-    0...
+The algorithm's density estimation is most effective in low-dimensional space. For
+high-dimensional data (`n_features > 50` is a common heuristic), it is highly
+recommended to use dimensionality reduction.
+- **`reduce_dims=True`** (default): Will reduce data to `target_dims`.
+- **`dim_reducer`**: Can be set to `'tsne'`, `'pca'`, or a custom estimator instance
+  like UMAP. See the :ref:`sphx_glr_auto_examples_plot_custom_reducer.py` example for
+  how to use a custom reducer.
