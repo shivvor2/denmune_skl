@@ -47,16 +47,14 @@ class DenMune(BaseEstimator, ClusterMixin):
 
     dim_reducer : str or estimator object, default='tsne'
         The dimensionality reduction method to use. Can be 'tsne', 'pca',
-        'umap' (if installed), or a pre-initialized scikit-learn compatible
-        estimator object.
-
-    dim_reducer_params : dict, default = None
-        Arguments provided to the inner dimension reducer object, ignored if
-        `dim_reducer` is an estimator object
+        or a pre-initialized scikit-learn compatible estimator object.
 
     metric : str, default='euclidean'
         The distance metric to use for the k-nearest neighbor search. See
         `sklearn.neighbors.NearestNeighbors` for valid options.
+
+    metric_params : dict, default=None
+        Additional keyword arguments for the metric function.
 
     n_jobs : int, default=None
         The number of parallel jobs to run for neighbors search and
@@ -109,7 +107,7 @@ class DenMune(BaseEstimator, ClusterMixin):
     >>> from sklearn.preprocessing import StandardScaler
     >>> import numpy as np
     >>> # Assuming DenMune is defined in the current scope or imported
-    >>> # from denmune import DenMune
+    >>> from denmune_skl import DenMune
     >>>
     >>> # Generate sample data
     >>> X, y = make_moons(n_samples=250, noise=0.07, random_state=42)
