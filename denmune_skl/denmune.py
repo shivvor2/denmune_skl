@@ -1,22 +1,20 @@
 import warnings
-from typing import Any
 
 import numpy as np
-from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
+from scipy.sparse import csr_matrix, issparse
 from sklearn.base import BaseEstimator, ClusterMixin, _fit_context, clone
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from sklearn.metrics.pairwise import _VALID_METRICS
 from sklearn.neighbors import NearestNeighbors
 from sklearn.utils import check_random_state
-from sklearn.utils.validation import check_array, check_is_fitted, validate_data
-from sklearn.metrics.pairwise import _VALID_METRICS
 from sklearn.utils._param_validation import (
+    Boolean,
+    Integral,
     Interval,
     StrOptions,
-    Real,
-    Integral,
-    Boolean,
 )
-from scipy.sparse import csr_matrix, issparse
+from sklearn.utils.validation import validate_data
 
 REDUCER_CLASS_MAP: dict[str, BaseEstimator] = {
     "tsne": TSNE,
@@ -131,7 +129,10 @@ class DenMune(BaseEstimator, ClusterMixin):
     >>> unique_labels = set(labels)
     >>>
     >>> fig, ax = plt.subplots(figsize=(8, 6))
-    >>> colors = [plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))]
+    >>> colors = [
+    >>>     plt.cm.Spectral(each)
+    >>>     for each in np.linspace(0, 1, len(unique_labels))
+    >>> ]
     >>>
     >>> for k, col in zip(unique_labels, colors):
     ...     if k == -1:
@@ -164,7 +165,8 @@ class DenMune(BaseEstimator, ClusterMixin):
     ...         label=f"Cluster {k} (Boundary)" if k != -1 else "",
     ...     )
     ...
-    >>> ax.set_title(f"DenMune Clustering (k={model.k_nearest})\nEstimated clusters: {n_clusters}")
+    >>> ax.set_title(f"DenMune Clustering (k={model.k_nearest})"
+    >>>               "\nEstimated clusters: {n_clusters}")
     >>> ax.set_xlabel("Feature 1")
     >>> ax.set_ylabel("Feature 2")
     >>> # Create a legend that doesn't duplicate labels
@@ -245,13 +247,15 @@ class DenMune(BaseEstimator, ClusterMixin):
         if self.reduce_dims:
             if self.metric == "precomputed":
                 raise ValueError(
-                    "Cannot perform dimensionality reduction when metric is 'precomputed'. "
-                    "Set reduce_dims=False or provide a feature matrix."
+                    "Cannot perform dimensionality reduction when metric is "
+                    "'precomputed'. Please Set reduce_dims=False or provide a feature "
+                    "matrix."
                 )
             if self.n_features_in_ <= self.target_dims:
                 warnings.warn(
-                    f"Skipping dimensionality reduction: n_features ({self.n_features_in_}) "
-                    f"is not greater than target_dims ({self.target_dims}).",
+                    f"Skipping dimensionality reduction: n_features "
+                    f"({self.n_features_in_}) lesser or equal to than target_dims "
+                    f"({self.target_dims}).",
                     UserWarning,
                     stacklevel=2,
                 )
@@ -267,9 +271,10 @@ class DenMune(BaseEstimator, ClusterMixin):
                     reducer_tags = self.reducer_._get_tags()
                     if "sparse" not in reducer_tags.get("X_types", []):
                         raise ValueError(
-                            f"The selected dimensionality reducer ({self.reducer_.__class__.__name__}) "
-                            "does not support sparse matrix input. To process sparse data, "
-                            "set reduce_dims=False or provide a sparse-compatible reducer "
+                            f"The selected dimensionality reducer "
+                            f"({self.reducer_.__class__.__name__}) does not support "
+                            "sparse matrix input. To process sparse data, set "
+                            "reduce_dims=False or provide a sparse-compatible reducer "
                             "instance (e.g., UMAP from 'umap-learn')."
                         )
                 X = self.reducer_.fit_transform(X)
@@ -409,7 +414,8 @@ class DenMune(BaseEstimator, ClusterMixin):
             for lable in labels[classified_mask]
         ]
 
-        # Remap the arbitrary root labels (e.g., 27, 1053, 4000) to a clean 0, 1, 2... sequence
+        # Remap the arbitrary root labels (e.g., 27, 1053, 4000) to a clean
+        # 0, 1, 2... sequence
         unique_final_labels = np.unique(final_labels[final_labels != -1])
         self.n_clusters_ = len(unique_final_labels)
 
@@ -502,7 +508,8 @@ class DenMune(BaseEstimator, ClusterMixin):
                 rejected_kwargs = set(kwargs.keys()) - set(valid_params)
                 if rejected_kwargs:
                     warnings.warn(
-                        f"the following unsupported arguments are supplied {rejected_kwargs}",
+                        f"the following unsupported arguments are supplied "
+                        f"{rejected_kwargs}",
                         category=UserWarning,
                         stacklevel=2,
                     )
