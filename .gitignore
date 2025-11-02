@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+
+# setuptools_scm (Auto versioning)
+denmune_skl/_version.py
+
 # scikit-learn specific
 doc/_build/
 doc/auto_examples/

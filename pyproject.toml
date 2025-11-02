@@ -47,7 +47,7 @@ include = ["denmune_skl*"]
 [tool.setuptools_scm]
 version_file = "denmune_skl/_version.py"
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
@@ -60,14 +60,14 @@ denmune-skl = { path=".", editable=true }
 
 [tool.pixi.feature.lint.dependencies]
 # The version below should be aligned with the one of `.pre-commit-config.yaml`
-black = "23.3.0"
-pre-commit = "3.7.1"
-ruff = "0.4.2"
+black = "*"
+pre-commit = "*"
+ruff = "*"
 
 [tool.pixi.feature.lint.tasks]
 black = { cmd = "black --check --diff denmune_skl && black --check --diff examples" }
 ruff = { cmd = "ruff check --output-format=full denmune_skl && ruff check --output-format=full examples" }
-lint = { depends_on = ["black", "ruff"]}
+lint = { depends-on = ["black", "ruff"]}
 
 [tool.pixi.feature.test.dependencies]
 pytest = "*"
