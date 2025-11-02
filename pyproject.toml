@@ -119,21 +119,21 @@ force-exclude = "skltemplate/_version.py"
 
 [tool.ruff]
 line-length = 88
-select = [
-    "C", "E", "F", "W", "I", "N", "D", "B", "A", "RUF", "S",
-    "T20", "SIM", "ARG", "PTH", "PD", "PGH", "PIE", "PL",
-    "TRY", "UP", "YTT"
-]
-ignore = [
-    # D203: 1 blank line required before class docstring
-    "D203",
-    # D213: Multi-line docstring summary should start at the second line
-    "D213",
-    # D401: First line should be in imperative mood
-    "D401",
-    # D415: First line should end with a period
-    "D415",
-]
+# select = [
+#     "C", "E", "F", "W", "I", "N", "D", "B", "A", "RUF", "S",
+#     "T20", "SIM", "ARG", "PTH", "PD", "PGH", "PIE", "PL",
+#     "TRY", "UP", "YTT"
+# ]
+# ignore = [
+#     # D203: 1 blank line required before class docstring
+#     "D203",
+#     # D213: Multi-line docstring summary should start at the second line
+#     "D213",
+#     # D401: First line should be in imperative mood
+#     "D401",
+#     # D415: First line should end with a period
+#     "D415",
+# ]
 
 [tool.ruff.lint]
 # all rules can be found here: https://beta.ruff.rs/docs/rules/
