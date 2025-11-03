@@ -77,7 +77,11 @@ def all_estimators(type_filter=None):
             module = import_module(module_name)
             classes = inspect.getmembers(module, inspect.isclass)
             classes = [
-                (name, est_cls) for name, est_cls in classes if not name.startswith("_")
+                (name, est_cls)
+                for name, est_cls in classes
+                # Prevents discovery util function from collecting imported classes
+                # from sklearn
+                if not name.startswith("_") and est_cls.__module__ == module_name
             ]
 
             all_classes.extend(classes)
