@@ -31,7 +31,7 @@ This project was created to provide a version of DenMune that is:
 ### Installation
 
 ```bash
-pip install denmune-skl
+pip install denmune_skl
 ```
 
 ### Quick Usage
@@ -39,7 +39,7 @@ pip install denmune-skl
 ```python
 from sklearn.datasets import make_moons
 from sklearn.preprocessing import StandardScaler
-from denmune-skl import DenMune
+from denmune_skl import DenMune
 import matplotlib.pyplot as plt
 import numpy as np
 

@@ -6,9 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
-
-# setuptools_scm (Auto versioning)
-denmune_skl/_version.py
+# test logs
+test_log.txt
 
 # scikit-learn specific
 doc/_build/
@@ -82,4 +81,4 @@ target/
 .LSOverride
 
 # auto-generated files
-skltemplate/_version.py
+denmune_skl/_version.py
