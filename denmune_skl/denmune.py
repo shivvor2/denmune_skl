@@ -1,4 +1,5 @@
 import warnings
+from numbers import Integral
 
 import numpy as np
 from scipy.sparse import csr_matrix, issparse
@@ -8,12 +9,7 @@ from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import _VALID_METRICS
 from sklearn.neighbors import NearestNeighbors
 from sklearn.utils import check_random_state
-from sklearn.utils._param_validation import (
-    Boolean,
-    Integral,
-    Interval,
-    StrOptions,
-)
+from sklearn.utils._param_validation import Interval, StrOptions
 from sklearn.utils.validation import validate_data
 
 REDUCER_CLASS_MAP: dict[str, BaseEstimator] = {
@@ -165,8 +161,9 @@ class DenMune(BaseEstimator, ClusterMixin):
     ...         label=f"Cluster {k} (Boundary)" if k != -1 else "",
     ...     )
     ...
-    >>> ax.set_title(f"DenMune Clustering (k={model.k_nearest})"
-    >>>               "\nEstimated clusters: {n_clusters}")
+    >>> title = (f"DenMune Clustering (k={model.k_nearest})"
+    ...          f"Estimated clusters: {n_clusters}")
+    >>> ax.set_title(title)
     >>> ax.set_xlabel("Feature 1")
     >>> ax.set_ylabel("Feature 2")
     >>> # Create a legend that doesn't duplicate labels
@@ -177,14 +174,15 @@ class DenMune(BaseEstimator, ClusterMixin):
 
     References
     ----------
-    .. [1] Abbas, M., El-Zoghabi, A., & Shoukry, A. (2021). DenMune: Density peak based
+
+    [1] Abbas, M., El-Zoghabi, A., & Shoukry, A. (2021). DenMune: Density peak based
         clustering using mutual nearest neighbors. Pattern Recognition, 109, 107589.
         https://doi.org/10.1016/j.patcog.2020.107589
     """
 
     _parameter_constraints: dict = {
         "k_nearest": [Interval(Integral, 1, None, closed="left")],
-        "reduce_dims": [Boolean],
+        "reduce_dims": [bool],
         "target_dims": [Interval(Integral, 1, None, closed="left")],
         "dim_reducer": [StrOptions({"tsne", "pca"}), BaseEstimator],
         "metric": [StrOptions(set(_VALID_METRICS) | {"precomputed"}), callable],
