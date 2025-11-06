@@ -81,6 +81,7 @@ def all_estimators(type_filter=None):
                 for name, est_cls in classes
                 # Prevents discovery util function from collecting imported classes
                 # from sklearn
+                # Fix is not robust, will need revisiting later
                 if not name.startswith("_") and est_cls.__module__ == module_name
             ]
 

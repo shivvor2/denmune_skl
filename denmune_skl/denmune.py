@@ -8,7 +8,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import _VALID_METRICS
 from sklearn.neighbors import NearestNeighbors
-from sklearn.utils import check_random_state
+from sklearn.utils import check_random_state, get_tags
 from sklearn.utils._param_validation import Interval, StrOptions
 from sklearn.utils.validation import validate_data
 
@@ -18,7 +18,7 @@ REDUCER_CLASS_MAP: dict[str, BaseEstimator] = {
 }
 
 
-class DenMune(BaseEstimator, ClusterMixin):
+class DenMune(ClusterMixin, BaseEstimator):
     """
     DenMune: A density-peak based clustering algorithm.
 
@@ -86,7 +86,8 @@ class DenMune(BaseEstimator, ClusterMixin):
 
     projected_X_ : np.ndarray of shape (n_samples, target_dims)
         The input data `X` after dimensionality reduction has been applied. If
-        `reduce_dims` is False, this is a copy of the original `X`.
+        `reduce_dims` is False, or if dimensionality is not possible, this is a
+        copy of the original `X`.
 
     n_samples_ : int
         The number of samples in the input data `X`.
@@ -110,6 +111,7 @@ class DenMune(BaseEstimator, ClusterMixin):
     >>> # Compute DenMune clustering
     >>> model = DenMune(k_nearest=15, random_state=42)
     >>> model.fit(X)
+    DenMune(k_nearest=15, random_state=42)
     >>>
     >>> # Access the results
     >>> labels = model.labels_
@@ -218,7 +220,7 @@ class DenMune(BaseEstimator, ClusterMixin):
 
         Parameters
         ----------
-        X : array-like of shape (n_samples, n_features)
+        X : array-like of shape (n_samples, n_features_in)
             Training instances to cluster.
 
         y : Ignored
@@ -231,75 +233,97 @@ class DenMune(BaseEstimator, ClusterMixin):
         """
         # 1. Input validation
 
-        X = validate_data(X, accept_sparse=True, dtype=[np.float64, np.float32])
-        # X.shape is always 2d because `validate_data` prevents nd data (n >= 3)
+        X = validate_data(self, X=X, accept_sparse=True, dtype=[np.float64, np.float32])
 
-        # Check for incompatible combinations of hyperparameters
+        self.n_samples_ = X.shape[0]
 
-        if self.metric == "precomputed":
-            self.n_samples_ = X.shape[0]  # No information on amount of features
-        else:
-            self.n_samples_, self.n_features_in_ = X.shape
+        if self.n_samples_ <= 1:
+            # No reason to cluster no points or a single point
+            raise ValueError(f"n_samples={self.n_samples_} should be > 1.")
 
         # 2. Dim reduction (if enabled)
         if self.reduce_dims:
             if self.metric == "precomputed":
                 raise ValueError(
-                    "Cannot perform dimensionality reduction when metric is "
-                    "'precomputed'. Please Set reduce_dims=False or provide a feature "
-                    "matrix."
+                    "metric='precomputed' is not supported when reduce_dims=True"
                 )
-            if self.n_features_in_ <= self.target_dims:
+
+            reducer_params = {
+                "n_jobs": self.n_jobs,
+            }
+
+            if hasattr(self.dim_reducer, "n_components") or self.dim_reducer in [
+                "tsne",
+                "pca",
+            ]:
+                reducer_params["n_components"] = self.target_dims
+
+            # Special case for TSNE
+            if isinstance(self.dim_reducer, str) and self.dim_reducer == "tsne":
+                # Default perplexity is 30. It must be < n_samples.
+                if self.target_dims > 3:
+                    reducer_params["method"] = "exact"
+                if self.n_samples_ <= 30:
+                    reducer_params["perplexity"] = max(
+                        1,
+                        min(30, self.n_samples_ - 1),
+                    )
+
+            self.reducer_ = self._get_component(
+                self.dim_reducer,
+                REDUCER_CLASS_MAP,
+                self.random_state,
+                **reducer_params,
+            )
+            # Check Sparse compatibility
+            if issparse(X) and not get_tags(self.reducer_).input_tags.sparse:
+                reducer_input_tags = get_tags(self.reducer_).input_tags
+                if not reducer_input_tags.sparse:
+                    warnings.warn(
+                        f"The selected dimensionality reducer "
+                        f"({self.reducer_.__class__.__name__}) does not support sparse "
+                        f"input. Skipping dimensionality reduction and proceeding with "
+                        f"the original sparse data.",
+                        UserWarning,
+                        stacklevel=2,
+                    )
+            # Here metric != "precomputed" always
+            elif self.n_features_in_ <= self.target_dims:
                 warnings.warn(
-                    f"Skipping dimensionality reduction: n_features "
-                    f"({self.n_features_in_}) lesser or equal to than target_dims "
+                    f"Skipping dimensionality reduction: n_features_in_ "
+                    f"({self.n_features_in_}) is not greater than target_dims "
                     f"({self.target_dims}).",
                     UserWarning,
                     stacklevel=2,
                 )
             else:
-                self.reducer_ = self._get_component(
-                    self.dim_reducer,
-                    REDUCER_CLASS_MAP,
-                    self.random_state,
-                    n_components=self.target_dims,
-                    n_jobs=self.n_jobs,
-                )
-                if issparse(X):
-                    reducer_tags = self.reducer_._get_tags()
-                    if "sparse" not in reducer_tags.get("X_types", []):
-                        raise ValueError(
-                            f"The selected dimensionality reducer "
-                            f"({self.reducer_.__class__.__name__}) does not support "
-                            "sparse matrix input. To process sparse data, set "
-                            "reduce_dims=False or provide a sparse-compatible reducer "
-                            "instance (e.g., UMAP from 'umap-learn')."
-                        )
                 X = self.reducer_.fit_transform(X)
 
         self.projected_X_ = X
 
         # 3. Nearest Neighbor Search
         self.nn_ = NearestNeighbors(
-            n_neighbors=self.k_nearest + 1,
+            n_neighbors=self.k_nearest,
             metric=self.metric,
             metric_params=self.metric_params,
             n_jobs=self.n_jobs,
         )
         self.nn_.fit(X)
-        distances, indices = self.nn_.kneighbors(X)
+        # distances, indices = self.nn_.kneighbors()
 
-        # 4. Graph Construction and Point Classification
-        adj_matrix = csr_matrix(
-            (
-                np.ones(self.n_samples * self.k_nearest),
-                (
-                    np.arange(self.n_samples).repeat(self.k_nearest),
-                    indices[:, 1:].flatten(),
-                ),
-            ),
-            shape=(self.n_samples, self.n_samples),
-        )
+        # # 4. Graph Construction and Point Classification
+        # adj_matrix = csr_matrix(
+        #     (
+        #         np.ones(self.n_samples_ * self.k_nearest),
+        #         (
+        #             np.arange(self.n_samples_).repeat(self.k_nearest),
+        #             indices[:, 1:].flatten(),
+        #         ),
+        #     ),
+        #     shape=(self.n_samples_, self.n_samples_),
+        # )
+
+        adj_matrix = self.nn_.kneighbors_graph(X, mode="connectivity")
 
         # Mutual graph is the intersection of the graph and its transpose
         mutual_graph = adj_matrix.multiply(adj_matrix.T)
@@ -313,8 +337,8 @@ class DenMune(BaseEstimator, ClusterMixin):
 
         # 5. prepare_Clusters (using Union-Find)
         # State-tracking arrays
-        labels = np.full(self.n_samples, -1, dtype=np.intp)
-        cluster_parent = np.arange(self.n_samples, dtype=np.intp)
+        labels = np.full(self.n_samples_, -1, dtype=np.intp)
+        cluster_parent = np.arange(self.n_samples_, dtype=np.intp)
 
         # Sort points by density score (in-degree) as per paper's "Canonical ordering"
         sorted_indices = np.argsort(self.density_scores_)[::-1]
@@ -405,7 +429,7 @@ class DenMune(BaseEstimator, ClusterMixin):
 
         # 7. Set self.labels_
 
-        final_labels = np.full(self.n_samples, -1, dtype=np.intp)
+        final_labels = np.full(self.n_samples_, -1, dtype=np.intp)
         classified_mask = labels != -1
         final_labels[classified_mask] = [
             DenMune._find_root(lable, cluster_parent)
@@ -478,7 +502,8 @@ class DenMune(BaseEstimator, ClusterMixin):
             instance_params = kwargs.copy()
 
             # Only pass parameters that the component class actually accepts
-            valid_params = component_class.get_param_names()
+            valid_params = component_class._get_param_names()
+            # valid_params = component_class.get_params().keys()
             final_params = {
                 k: v for k, v in instance_params.items() if k in valid_params
             }
@@ -514,3 +539,12 @@ class DenMune(BaseEstimator, ClusterMixin):
                 instance.set_params(**filtered_kwargs)
 
             return instance
+
+    def __sklearn_tags__(self):
+        # Get the parent tags
+        tags = super().__sklearn_tags__()
+        # Define custom tags
+        tags.input_tags.sparse = True
+        tags.input_tags.allow_nan = False
+        tags.target_tags.required = False
+        return tags
