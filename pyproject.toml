@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "denmune-skl"
 dynamic = ["version"]
 authors = [{ name = "Loo Jun Zing", email = "jzloo11111@gmail.com" }]
-description = "A template for scikit-learn compatible packages."
+description = "A performant 3rd party implementation of the Denmune Clustering algorithm"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
@@ -115,7 +115,7 @@ exclude = '''
   | \.vscode
 )/
 '''
-force-exclude = "skltemplate/_version.py"
+force-exclude = "denmune_skl/_version.py"
 
 [tool.ruff]
 line-length = 88
@@ -161,3 +161,4 @@ ignore=[
 [tool.pytest.ini_options]
 addopts = "--doctest-modules --color=yes"
 doctest_optionflags = "NORMALIZE_WHITESPACE"
+testpaths = ["denmune_skl/tests", "denmune_skl/utils/tests"]
