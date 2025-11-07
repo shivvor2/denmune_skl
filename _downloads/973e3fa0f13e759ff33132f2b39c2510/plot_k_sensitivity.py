@@ -15,11 +15,11 @@ A stable algorithm should exhibit a plateau of high ARI scores across a range
 of `k` values, rather than a single sharp peak.
 """
 
+import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.datasets import make_blobs
 from sklearn.metrics import adjusted_rand_score
 from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-import numpy as np
 
 from denmune_skl import DenMune
 
