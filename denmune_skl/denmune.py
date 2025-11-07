@@ -2,7 +2,7 @@ import warnings
 from numbers import Integral
 
 import numpy as np
-from scipy.sparse import csr_matrix, issparse
+from scipy.sparse import issparse
 from sklearn.base import BaseEstimator, ClusterMixin, _fit_context, clone
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -309,126 +309,110 @@ class DenMune(ClusterMixin, BaseEstimator):
             n_jobs=self.n_jobs,
         )
         self.nn_.fit(X)
-        # distances, indices = self.nn_.kneighbors()
-
-        # # 4. Graph Construction and Point Classification
-        # adj_matrix = csr_matrix(
-        #     (
-        #         np.ones(self.n_samples_ * self.k_nearest),
-        #         (
-        #             np.arange(self.n_samples_).repeat(self.k_nearest),
-        #             indices[:, 1:].flatten(),
-        #         ),
-        #     ),
-        #     shape=(self.n_samples_, self.n_samples_),
-        # )
-
         adj_matrix = self.nn_.kneighbors_graph(X, mode="connectivity")
 
         # Mutual graph is the intersection of the graph and its transpose
         mutual_graph = adj_matrix.multiply(adj_matrix.T)
 
-        # Calculate homogeneity score
-        referred_by_counts = np.array(adj_matrix.sum(axis=0)).flatten()  # in-degree
-        self.density_scores_ = referred_by_counts
-        reference_counts = np.array(
-            mutual_graph.sum(axis=1)
-        ).flatten()  # mutual neighbors
+        # 4. Point Classification and Canonical Ordering (Unchanged)
+        in_degree = np.array(adj_matrix.sum(axis=0)).flatten()
+        self.density_scores_ = in_degree
+        sorted_indices = np.argsort(in_degree)[::-1]
 
-        # 5. prepare_Clusters (using Union-Find)
+        # Get mutual neighbors for each point efficiently
+        mutual_neighbors = mutual_graph.tolil().rows
+
+        # 5. CreateClustersSkeleton (Phase I - Algorithm 2)
+        # This phase builds the initial cluster backbones from strong points.
+
         # State-tracking arrays
         labels = np.full(self.n_samples_, -1, dtype=np.intp)
         cluster_parent = np.arange(self.n_samples_, dtype=np.intp)
 
-        # Sort points by density score (in-degree) as per paper's "Canonical ordering"
-        sorted_indices = np.argsort(self.density_scores_)[::-1]
+        strong_point_mask = in_degree >= self.k_nearest
+        self.core_sample_indices_ = np.where(strong_point_mask)[0]
 
-        self.core_sample_indices_ = []
-
-        # Get the indices of the mutual neighbors for each point from the sparse matrix
-        mutual_neighbors = mutual_graph.tolil().rows
-
+        # Process strong points in canonical order to form cluster skeletons
         for i in sorted_indices:
-            # Condition to be a core point (density peak)
-            # len(refer_to) is always self.k_nearest
-            is_strong_enough = referred_by_counts[i] >= self.k_nearest
-            has_references = reference_counts[i] > 0
-
-            if not (is_strong_enough and has_references):
+            if not strong_point_mask[i]:
                 continue
 
-            # This point is a potential cluster center. Mark it as such.
-            # Its initial label is its own index.
+            # This point is a strong point. Mark it as initially belonging to its own
+            # cluster.
             labels[i] = i
-            self.core_sample_indices_.append(i)
 
-            # --- Voting and Merging Logic ---
-            # Get neighbors of point `i` that are in the mutual graph
-            neighbors_of_i = mutual_neighbors[i]
+            # Per Algorithm 2, the candidate set C is the point plus its MNNs.
+            # Check which existing clusters this set intersects with.
+            candidate_set_indices = mutual_neighbors[i]
 
-            # Find which of these neighbors have already been assigned a cluster
-            # (i.e., they were processed earlier in this loop)
-            classified_neighbors = [n for n in neighbors_of_i if labels[n] != -1]
+            # Find which of these MNNs have already been processed and assigned a
+            # cluster.
+            # These neighbors form the bridge to other clusters.
+            classified_neighbors = [n for n in candidate_set_indices if labels[n] != -1]
 
             if not classified_neighbors:
-                continue  # No classified neighbors to merge with, it's a new cluster.
+                # This strong point doesn't connect to any existing cluster skeleton.
+                # Keep it as a new, independent cluster for now.
+                continue
 
-            # Find the root clusters of these neighbors
-            neighbor_roots = [
+            # MERGE LOGIC
+            # Find the root clusters of all neighbors it connects to.
+            neighbor_roots = {
                 DenMune._find_root(labels[n], cluster_parent)
                 for n in classified_neighbors
-            ]
+            }
 
-            # VOTE: Find the most common root cluster among neighbors
-            unique_roots, counts = np.unique(neighbor_roots, return_counts=True)
-            majority_root = unique_roots[np.argmax(counts)]
+            # Merge current point's cluster with ALL clusters it intersects.
+            root_of_i = DenMune._find_root(i, cluster_parent)
+            for root in neighbor_roots:
+                DenMune._union(root_of_i, root, cluster_parent)
 
-            # UNION: Merge all neighbor clusters and the current point's cluster
-            # into the majority root cluster.
-            root_of_i = DenMune._find_root(labels[i], cluster_parent)
-            cluster_parent[root_of_i] = majority_root
-            for root in unique_roots:
-                if root != majority_root:
-                    cluster_parent[root] = majority_root
+        # 6. AssignWeakPoints (Phase II - Algorithm 3)
+        # This phase attaches weak points to the established skeletons.
 
-        # 6. attach_Points (vectorized)
-        # The original code has two phases (strong and weak). We can simplify this.
-        # We iterate until no more points can be attached.
+        # First, create a dictionary mapping each cluster root to the set of its member
+        # points.
+        # This is required for the intersection calculation specified in the paper.
+
+        # Iteratively attach weak points until no more changes occur.
         while True:
-            # Find all unclassified points that have at least one mutual neighbor
-            unclassified_mask = (labels == -1) & (reference_counts > 0)
-
-            if not np.any(unclassified_mask):
-                break  # No more points to attach
-
-            points_to_attach_indices = np.where(unclassified_mask)[0]
-
             newly_assigned_count = 0
-            for i in points_to_attach_indices:
-                # Get mutual neighbors and find which are classified
-                neighbors_of_i = mutual_neighbors[i]
-                classified_neighbors = [n for n in neighbors_of_i if labels[n] != -1]
+            unclassified_indices = np.where(labels == -1)[0]
+            if len(unclassified_indices) == 0:
+                break
 
-                if not classified_neighbors:
+            for i in unclassified_indices:
+                mnn_of_i = mutual_neighbors[i]
+                if not mnn_of_i:
                     continue
 
-                # Vote for the majority cluster
+                classified_mnn = [n for n in mnn_of_i if labels[n] != -1]
+                if not classified_mnn:
+                    continue
+
+                # Count occurrences of roots among neighbors.
+                # This is equivalent to the simplified `|MNN_q_i INTERSECT C_j|` rule.
                 neighbor_roots = [
                     DenMune._find_root(labels[n], cluster_parent)
-                    for n in classified_neighbors
+                    for n in classified_mnn
                 ]
-                unique_roots, counts = np.unique(neighbor_roots, return_counts=True)
-                majority_root = unique_roots[np.argmax(counts)]
 
-                # Assign the point to this cluster
-                labels[i] = majority_root
+                if not neighbor_roots:
+                    continue
+
+                unique_roots, counts = np.unique(neighbor_roots, return_counts=True)
+
+                # Find the root with the maximum count (max intersection).
+                # `np.argmax` handles ties deterministically by taking first occurrence.
+                best_cluster_root = unique_roots[np.argmax(counts)]
+
+                labels[i] = best_cluster_root
                 newly_assigned_count += 1
 
             if newly_assigned_count == 0:
-                break  # No progress was made in this iteration, stop.
+                break
 
-        # 7. Set self.labels_
-
+        # 7. Setting self.labels_
         final_labels = np.full(self.n_samples_, -1, dtype=np.intp)
         classified_mask = labels != -1
         final_labels[classified_mask] = [
@@ -483,6 +467,14 @@ class DenMune(ClusterMixin, BaseEstimator):
         # Path compression for optimization
         parent_array[i] = DenMune._find_root(parent_array[i], parent_array)
         return parent_array[i]
+
+    @staticmethod
+    def _union(i, j, parent_array):
+        """Standard union operation for Union-Find."""
+        root_i = DenMune._find_root(i, parent_array)
+        root_j = DenMune._find_root(j, parent_array)
+        if root_i != root_j:
+            parent_array[root_j] = root_i
 
     @staticmethod
     def _get_component(component, default_map, random_state, **kwargs):
