@@ -1,0 +1,38 @@
+﻿DenMune
+=================================
+
+.. currentmodule:: denmune_skl
+
+.. autoclass:: DenMune
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      
+      
+        ~DenMune.fit
+      
+      
+        ~DenMune.fit_predict
+      
+      
+        ~DenMune.get_metadata_routing
+      
+      
+        ~DenMune.get_params
+      
+      
+        ~DenMune.set_params
+      
+   
+   
+
+.. include:: denmune_skl.DenMune.examples
+
+.. raw:: html
+
+    <div style='clear:both'></div>
