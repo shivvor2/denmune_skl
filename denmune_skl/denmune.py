@@ -99,14 +99,12 @@ class DenMune(ClusterMixin, BaseEstimator):
     Examples
     --------
     >>> from sklearn.datasets import make_moons
-    >>> from sklearn.preprocessing import StandardScaler
     >>> import numpy as np
     >>> # Assuming DenMune is defined in the current scope or imported
     >>> from denmune_skl import DenMune
     >>>
     >>> # Generate sample data
-    >>> X, y = make_moons(n_samples=250, noise=0.07, random_state=42)
-    >>> X = StandardScaler().fit_transform(X)
+    >>> X, y = make_moons(n_samples=200, noise=0.05, random_state=42)
     >>>
     >>> # Compute DenMune clustering
     >>> model = DenMune(k_nearest=15, random_state=42)
@@ -118,61 +116,6 @@ class DenMune(ClusterMixin, BaseEstimator):
     >>> n_clusters = model.n_clusters_
     >>> print(f"Estimated number of clusters: {n_clusters}")
     Estimated number of clusters: 2
-    >>>
-    >>> # Visualize the results
-    >>> import matplotlib.pyplot as plt
-    >>>
-    >>> core_samples_mask = np.zeros_like(labels, dtype=bool)
-    >>> core_samples_mask[model.core_sample_indices_] = True
-    >>> unique_labels = set(labels)
-    >>>
-    >>> fig, ax = plt.subplots(figsize=(8, 6))
-    >>> colors = [
-    >>>     plt.cm.Spectral(each)
-    >>>     for each in np.linspace(0, 1, len(unique_labels))
-    >>> ]
-    >>>
-    >>> for k, col in zip(unique_labels, colors):
-    ...     if k == -1:
-    ...         # Black used for noise.
-    ...         col = [0, 0, 0, 1]
-    ...
-    ...     class_member_mask = labels == k
-    ...
-    ...     # Plot core samples
-    ...     xy = X[class_member_mask & core_samples_mask]
-    ...     ax.plot(
-    ...         xy[:, 0],
-    ...         xy[:, 1],
-    ...         "o",
-    ...         markerfacecolor=tuple(col),
-    ...         markeredgecolor="k",
-    ...         markersize=12,
-    ...         label=f"Cluster {k} (Core)" if k != -1 else "Noise",
-    ...     )
-    ...
-    ...     # Plot non-core samples (boundary points)
-    ...     xy = X[class_member_mask & ~core_samples_mask]
-    ...     ax.plot(
-    ...         xy[:, 0],
-    ...         xy[:, 1],
-    ...         "o",
-    ...         markerfacecolor=tuple(col),
-    ...         markeredgecolor="k",
-    ...         markersize=6,
-    ...         label=f"Cluster {k} (Boundary)" if k != -1 else "",
-    ...     )
-    ...
-    >>> title = (f"DenMune Clustering (k={model.k_nearest})"
-    ...          f"Estimated clusters: {n_clusters}")
-    >>> ax.set_title(title)
-    >>> ax.set_xlabel("Feature 1")
-    >>> ax.set_ylabel("Feature 2")
-    >>> # Create a legend that doesn't duplicate labels
-    >>> handles, labels = plt.gca().get_legend_handles_labels()
-    >>> by_label = dict(zip(labels, handles))
-    >>> plt.legend(by_label.values(), by_label.keys())
-    >>> plt.show()
 
     References
     ----------
@@ -369,10 +312,6 @@ class DenMune(ClusterMixin, BaseEstimator):
 
         # 6. AssignWeakPoints (Phase II - Algorithm 3)
         # This phase attaches weak points to the established skeletons.
-
-        # First, create a dictionary mapping each cluster root to the set of its member
-        # points.
-        # This is required for the intersection calculation specified in the paper.
 
         # Iteratively attach weak points until no more changes occur.
         while True:
