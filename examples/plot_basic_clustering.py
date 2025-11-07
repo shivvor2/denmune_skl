@@ -15,10 +15,10 @@ which form the skeleton of the clusters, and "weak" points (boundary samples)
 that are attached to them.
 """
 
-from sklearn.datasets import make_moons
-from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.datasets import make_moons
+from sklearn.preprocessing import StandardScaler
 
 from denmune_skl import DenMune
 
