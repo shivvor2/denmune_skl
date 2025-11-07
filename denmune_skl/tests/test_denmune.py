@@ -1,12 +1,12 @@
-import pytest
 import numpy as np
+import pytest
 from scipy.sparse import csr_matrix
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.datasets import make_blobs, make_moons
 from sklearn.metrics import adjusted_rand_score
-from sklearn.exceptions import FitFailedWarning
 from sklearn.utils._testing import assert_array_equal
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted, check_array
+from sklearn.utils.validation import check_array, check_is_fitted
+
 from denmune_skl.denmune import DenMune
 
 
@@ -50,14 +50,20 @@ def test_invalid_parameters():
     # Test k_nearest
     with pytest.raises(
         ValueError,
-        match=r"The 'k_nearest' parameter of DenMune must be an int in the range \[1, inf\). Got 0 instead.",
+        match=(
+            r"The 'k_nearest' parameter of DenMune must be an int in the range "
+            r"\[1, inf\). Got 0 instead."
+        ),
     ):
         DenMune(k_nearest=0).fit([[0, 0]])
 
     # Test target_dims
     with pytest.raises(
         ValueError,
-        match=r"The 'target_dims' parameter of DenMune must be an int in the range \[1, inf\). Got 0 instead.",
+        match=(
+            r"The 'target_dims' parameter of DenMune must be an int in the range "
+            r"\[1, inf\). Got 0 instead."
+        ),
     ):
         DenMune(target_dims=0).fit([[0, 0], [1, 1], [0, 1]])
 
