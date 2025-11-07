@@ -8,7 +8,7 @@ __pycache__/
 
 # test logs
 test_logs/
-test_log.txt
+*_log.txt
 
 # scikit-learn specific
 doc/_build/
