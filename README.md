@@ -1,12 +1,17 @@
 # DenMune-Sklearn: A Robust Implementation of the DenMune Clustering Algorithm
 
+<!-- Code formatter/ linter -->
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
-[![Deploy documentation](https://github.com/shivvor2/denmune-skl/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://shivvor2.github.io/denmune-skl/)
-[![PyPI version](https://badge.fury.io/py/denmune-skl.svg)](https://badge.fury.io/py/denmune-skl) <!-- Change package name to sklearn-contrib-denmune when accepted (?) -->
-[![Unit Tests](https://github.com/shivvor2/denmune-skl/actions/workflows/python-app.yml/badge.svg)](https://github.com/shivvor2/denmune-skl/actions/workflows/python-app.yml)
+<!-- github actions -->
+[![Unit Tests](https://github.com/shivvor2/denmune_skl/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/shivvor2/denmune_skl/actions/workflows/python-app.yml)
 [![codecov](https://codecov.io/gh/shivvor2/denmune_skl/branch/main/graph/badge.svg?token=0DQNXM34P2)](https://codecov.io/gh/shivvor2/denmune_skl)
-[![Documentation Status](https://github.com/shivvor2/denmune-skl/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://shivvor2.github.io/denmune-skl/)
+[![CodeQL Advanced](https://github.com/shivvor2/denmune_skl/actions/workflows/codeql.yml/badge.svg)](https://github.com/shivvor2/denmune_skl/actions/workflows/codeql.yml)
+[![Documentation](https://github.com/shivvor2/denmune_skl/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/shivvor2/denmune_skl/actions/workflows/deploy-gh-pages.yml)
+[![Dependabot Updates](https://github.com/shivvor2/denmune_skl/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/shivvor2/denmune_skl/actions/workflows/dependabot/dependabot-updates)
+<!-- Package version, need to upload to pypi later -->
+[![PyPI version](https://badge.fury.io/py/denmune-skl.svg)](https://badge.fury.io/py/denmune-skl) <!-- Change package name to sklearn-contrib-denmune when accepted (?) -->
+<!-- License -->
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 An efficient, scikit-learn compatible implementation of the "DENMUNE: Density peak based clustering using mutual nearest neighbors" algorithm.
