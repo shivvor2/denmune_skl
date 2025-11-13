@@ -140,7 +140,9 @@ def test_dim_reduction_logic(blob_data):
     # 1. Test reduce_dims=False
     model_no_reduce = DenMune(reduce_dims=False)
     model_no_reduce.fit(X)
-    assert not hasattr(model_no_reduce, "reducer_")
+    # Should always have `reducer_` params regardless of performing dim reduction
+    # or not
+    assert hasattr(model_no_reduce, "reducer_")
     assert_array_equal(model_no_reduce.projected_X_, X)
 
     # 2. Test reduce_dims=True
