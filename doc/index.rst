@@ -1,23 +1,20 @@
-.. project-template documentation master file, created by
-   sphinx-quickstart on Mon Jan 18 14:44:12 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. denmune-skl documentation master file.
 
 :notoc:
 
-#############################################
-Project template for `scikit-learn` extension
-#############################################
+###########################################################
+DenMune-Sklearn: Robust Density-Based Clustering
+###########################################################
 
 **Date**: |today| **Version**: |version|
 
 **Useful links**:
-`Source Repository <https://github.com/scikit-learn-contrib/project-template>`__ |
-`Issues & Ideas <https://github.com/scikit-learn-contrib/project-templatek/issues>`__ |
+`Source Repository <https://github.com/shivvor2/denmune-skl>`__ |
+`Issues & Ideas <https://github.com/shivvor2/denmune-skl/issues>`__
 
-This is the documentation for the `project-template` to help at extending
-`scikit-learn`. It provides some information on how to build your own custom
-`scikit-learn` compatible estimators as well as a template to package them.
+**DenMune-Sklearn** is an efficient, scikit-learn compatible implementation of the "DENMUNE: Density peak based clustering using mutual nearest neighbors" algorithm. It was developed to provide a robust, performant, and API-compliant alternative to existing implementations.
+
+This library excels at identifying non-convex clusters of varying densities, automatically detects noise, and integrates seamlessly into the scikit-learn ecosystem.
 
 
 .. grid:: 1 2 2 2
@@ -25,12 +22,12 @@ This is the documentation for the `project-template` to help at extending
     :padding: 2 2 0 0
     :class-container: sd-text-center
 
-    .. grid-item-card:: Getting started
+    .. grid-item-card:: Getting Started
         :img-top: _static/img/index_getting_started.svg
         :class-card: intro-card
         :shadow: md
 
-        Information regarding this template and how to modify it for your own project.
+        Install the library and run your first clustering task in minutes.
 
         +++
 
@@ -40,15 +37,14 @@ This is the documentation for the `project-template` to help at extending
             :color: secondary
             :expand:
 
-            To the getting started guideline
+            To the Getting Started guide
 
-    .. grid-item-card::  User guide
+    .. grid-item-card::  User Guide
         :img-top: _static/img/index_user_guide.svg
         :class-card: intro-card
         :shadow: md
 
-        An example of narrative documentation. Here, we will explain how to create your
-        own `scikit-learn` estimator.
+        Understand the theory behind DenMune, its parameters, and practical usage tips.
 
         +++
 
@@ -58,15 +54,14 @@ This is the documentation for the `project-template` to help at extending
             :color: secondary
             :expand:
 
-            To the user guide
+            To the User Guide
 
-    .. grid-item-card::  API reference
+    .. grid-item-card::  API Reference
         :img-top: _static/img/index_api.svg
         :class-card: intro-card
         :shadow: md
 
-        An example of API documentation. This is an example how to use `sphinx` to
-        automatically generate reference API page.
+        Detailed descriptions of all classes, functions, and their parameters.
 
         +++
 
@@ -76,15 +71,14 @@ This is the documentation for the `project-template` to help at extending
             :color: secondary
             :expand:
 
-            To the reference guide
+            To the API Reference
 
     .. grid-item-card::  Examples
         :img-top: _static/img/index_examples.svg
         :class-card: intro-card
         :shadow: md
 
-        A set of examples. It complements the User Guide and it is the right place to
-        show how to use your compatible estimator.
+        A gallery of examples demonstrating key features and advanced use cases.
 
         +++
 
@@ -94,7 +88,7 @@ This is the documentation for the `project-template` to help at extending
             :color: secondary
             :expand:
 
-            To the gallery of examples
+            To the Example Gallery
 
 
 .. toctree::

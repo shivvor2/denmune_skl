@@ -19,7 +19,7 @@ including:
 
 - **Lack of Scikit-learn Compatibility**: The legacy class did not inherit from
   `BaseEstimator`, preventing its use in standard scikit-learn tools like
-  ``Pipeline`` and ``GridSearchCV``. `Our implementation <[INSERT GIT PERMALINK TO YOUR denmune.py]>`_
+  ``Pipeline`` and ``GridSearchCV``. Our implementation, :class:`~denmune_skl.DenMune`,
   is a proper scikit-learn estimator.
 - **Algorithmic Flaws**: The previous version improperly mixed training and testing data,
   leading to data leakage and invalid evaluation metrics. This implementation adheres to
@@ -45,7 +45,7 @@ The size of the Reference-List, `|KNN_p<-|`, serves as the density score for poi
 
 Points are classified based on their density:
 - **Strong Points**: Points where `|KNN_p<-| >= k_nearest`. These are density peaks and
-  serve as the initial seeds for clusters.
+serve as the initial seeds for clusters.
 - **Weak Points**: Points where `|KNN_p<-| < k_nearest`. These are boundary points or noise.
 - **Noise Points**: Points with few or no mutual neighbors.
 
@@ -80,5 +80,5 @@ high-dimensional data (`n_features > 50` is a common heuristic), it is highly
 recommended to use dimensionality reduction.
 - **`reduce_dims=True`** (default): Will reduce data to `target_dims`.
 - **`dim_reducer`**: Can be set to `'tsne'`, `'pca'`, or a custom estimator instance
-  like UMAP. See the :ref:`sphx_glr_auto_examples_plot_custom_reducer.py` example for
-  how to use a custom reducer.
+like UMAP. See the :ref:`sphx_glr_auto_examples_plot_custom_reducer.py` example for
+how to use a custom reducer.

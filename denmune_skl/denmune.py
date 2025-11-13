@@ -94,8 +94,8 @@ class DenMune(ClusterMixin, BaseEstimator):
         The number of samples in the input data `X`.
 
     n_features_in_ : int
-        The number of features seen during :term:`fit`. Not availiable if
-        `metric == "precomputed".
+        The number of features seen during :term:`fit`. Not available if
+        ``metric == "precomputed"``.
 
     Examples
     --------
