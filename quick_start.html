@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started &#8212; denmune-skl 0.1.dev20+g2ddbfd3c9 documentation</title>
+    <title>Getting Started &#8212; denmune-skl 0.1.dev39+g5038ded3a documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=4fa252d6"></script>
+    <script src="_static/documentation_options.js?v=a5528b19"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
@@ -53,10 +53,10 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="User Guide" href="user_guide.html" />
-    <link rel="prev" title="Project template for scikit-learn extension" href="index.html" />
+    <link rel="prev" title="DenMune-Sklearn: Robust Density-Based Clustering" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.dev20+g2ddbfd3c9" />
+  <meta name="docsearch:version" content="0.1.dev39+g5038ded3a" />
   </head>
   
   
@@ -122,8 +122,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="denmune-skl 0.1.dev20+g2ddbfd3c9 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="denmune-skl 0.1.dev20+g2ddbfd3c9 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="denmune-skl 0.1.dev39+g5038ded3a documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="denmune-skl 0.1.dev39+g5038ded3a documentation - Home"/>
   
   
 </a></div>
@@ -140,7 +140,7 @@
     
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Getting started
+    Getting Started
   </a>
 </li>
 
@@ -256,7 +256,7 @@
     
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Getting started
+    Getting Started
   </a>
 </li>
 
@@ -354,7 +354,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Getting started</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Getting Started</span></li>
   </ul>
 </nav>
 </div>
@@ -372,123 +372,64 @@
                 <article class="bd-article">
                   
   <section id="getting-started">
-<span id="quick-start"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
-<p>This package serves as a skeleton package aiding at developing compatible
-scikit-learn contribution.</p>
-<section id="creating-your-own-scikit-learn-contribution-package">
-<h2>Creating your own scikit-learn contribution package<a class="headerlink" href="#creating-your-own-scikit-learn-contribution-package" title="Link to this heading">#</a></h2>
-<section id="download-and-setup-your-repository">
-<h3>Download and setup your repository<a class="headerlink" href="#download-and-setup-your-repository" title="Link to this heading">#</a></h3>
-<p>To create your package, you need to clone the <code class="docutils literal notranslate"><span class="pre">project-template</span></code> repository:</p>
+<span id="quick-start"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
+<p>This guide provides the essential steps to install <code class="docutils literal notranslate"><span class="pre">denmune-skl</span></code> and run your first clustering analysis.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>The package can be installed from PyPI using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
 span.prompt1:before {
   content: "$ ";
 }
-</style><span class="prompt1">git<span class="w"> </span>clone<span class="w"> </span>https://github.com/scikit-learn-contrib/project-template.git</span>
-</pre></div></div><p>Before to reinitialize your git repository, you need to make the following
-changes. Replace all occurrences of <code class="docutils literal notranslate"><span class="pre">skltemplate</span></code>, <code class="docutils literal notranslate"><span class="pre">sklearn-template</span></code>, or
-<code class="docutils literal notranslate"><span class="pre">project-template</span></code> with the name of you own project. You can find all the
-occurrences using the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git<span class="w"> </span>grep<span class="w"> </span>skltemplate</span>
-<span class="prompt1">git<span class="w"> </span>grep<span class="w"> </span>sklearn-template</span>
-<span class="prompt1">git<span class="w"> </span>grep<span class="w"> </span>project-template</span>
-</pre></div></div><p>To remove the history of the template package, you need to remove the <code class="docutils literal notranslate"><span class="pre">.git</span></code>
-directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">rm<span class="w"> </span>-rf<span class="w"> </span>.git</span>
-</pre></div></div><p>Then, you need to initialize your new git repository:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git<span class="w"> </span>init</span>
-<span class="prompt1">git<span class="w"> </span>add<span class="w"> </span>.</span>
-<span class="prompt1">git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;Initial commit&#39;</span></span>
-</pre></div></div><p>Finally, you create an online repository on GitHub and push your code online:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>https://github.com/your_remote/your_contribution.git</span>
-<span class="prompt1">git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main</span>
+</style><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>denmune-skl</span>
+</pre></div></div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Until the project is accepted into <code class="docutils literal notranslate"><span class="pre">scikit-learn-contrib</span></code> and published, you must install it directly from the source repository.</p>
+</div>
+<section id="from-source">
+<h3>From Source<a class="headerlink" href="#from-source" title="Link to this heading">#</a></h3>
+<p>To install the latest development version, clone the repository and install it locally:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git<span class="w"> </span>clone<span class="w"> </span>https://github.com/shivvor2/denmune-skl.git</span>
+<span class="prompt1"><span class="nb">cd</span><span class="w"> </span>denmune-skl</span>
+<span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>.</span>
 </pre></div></div></section>
-<section id="develop-your-own-scikit-learn-estimators">
-<h3>Develop your own scikit-learn estimators<a class="headerlink" href="#develop-your-own-scikit-learn-estimators" title="Link to this heading">#</a></h3>
-<p>You can modify the source files as you want. However, your custom estimators
-need to pass the <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.estimator_checks.check_estimator.html#sklearn.utils.estimator_checks.check_estimator">check_estimator</a> test to be scikit-learn compatible. We provide a
-file called <code class="docutils literal notranslate"><span class="pre">test_common.py</span></code> where we run the checks on our custom estimators.</p>
-<p>You can refer to the <a class="reference internal" href="user_guide.html#user-guide"><span class="std std-ref">User Guide</span></a> to help you create a compatible
-scikit-learn estimator.</p>
-<p>In any case, developers should endeavor to adhere to scikit-learn’s
-<a class="reference external" href="http://scikit-learn.org/stable/developers/">Contributor’s Guide</a> which promotes the use of:</p>
+</section>
+<section id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h2>
+<p>The following example demonstrates how to use <code class="docutils literal notranslate"><span class="pre">DenMune</span></code> to cluster a simple non-convex dataset.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_moons</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">denmune_skl</span><span class="w"> </span><span class="kn">import</span> <span class="n">DenMune</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># 1. Generate and prepare data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_moons</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># 2. Initialize and fit the model</span>
+<span class="c1"># The k_nearest parameter is the main hyperparameter to tune.</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">DenMune</span><span class="p">(</span><span class="n">k_nearest</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># 3. Visualize the results</span>
+<span class="n">n_clusters</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">n_clusters_</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estimated number of clusters: </span><span class="si">{</span><span class="n">n_clusters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DenMune Clustering (k=</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">k_nearest</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Feature 1&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Feature 2&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="where-to-go-next">
+<h2>Where to Go Next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>algorithm-specific unit tests, in addition to <code class="docutils literal notranslate"><span class="pre">check_estimator</span></code>’s common
-tests;</p></li>
-<li><p><a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP8</a>-compliant code;</p></li>
-<li><p>a clearly documented API using <a class="reference external" href="https://github.com/numpy/numpydoc">NumpyDoc</a> and <a class="reference external" href="https://www.python.org/dev/peps/pep-0257/">PEP257</a>-compliant docstrings;</p></li>
-<li><p>references to relevant scientific literature in standard citation formats;</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/doctest.html">doctests</a> to provide succinct usage examples;</p></li>
-<li><p>standalone examples to illustrate the usage, model visualisation, and
-benefits/benchmarks of particular algorithms;</p></li>
-<li><p>efficient code when the need for optimization is supported by benchmarks.</p></li>
+<li><p>To learn about the algorithm’s theory and parameter tuning, see the <a class="reference internal" href="user_guide.html"><span class="doc">User Guide</span></a>.</p></li>
+<li><p>For more detailed code examples, browse the <a class="reference internal" href="auto_examples/index.html"><span class="doc">Example Gallery</span></a>.</p></li>
+<li><p>For detailed information on the class and its methods, consult the <a class="reference internal" href="api.html"><span class="doc">API Reference</span></a>.</p></li>
 </ul>
-</section>
-<section id="managing-your-local-and-continuous-integration-environment">
-<h3>Managing your local and continuous integration environment<a class="headerlink" href="#managing-your-local-and-continuous-integration-environment" title="Link to this heading">#</a></h3>
-<p>Here, we set up for you an repository that uses <code class="docutils literal notranslate"><span class="pre">pixi</span></code>. The <code class="docutils literal notranslate"><span class="pre">pixi.toml</span></code> file defines
-the packages and tasks to be run that we will present below. You can refer to the
-following documentation link to install <code class="docutils literal notranslate"><span class="pre">pixi</span></code>: <a class="reference external" href="https://pixi.sh/latest/#installation">https://pixi.sh/latest/#installation</a></p>
-<p>Once done, you can refer to the documentation to get started but we provide the
-command below to interact with the main task requested to develop your package.</p>
-</section>
-<section id="edit-the-documentation">
-<h3>Edit the documentation<a class="headerlink" href="#edit-the-documentation" title="Link to this heading">#</a></h3>
-<p>The documentation is created using <a class="reference external" href="http://www.sphinx-doc.org/en/stable/">Sphinx</a>. In addition, the examples are
-created using <code class="docutils literal notranslate"><span class="pre">sphinx-gallery</span></code>. Therefore, to generate locally the
-documentation, you can leverage the following <code class="docutils literal notranslate"><span class="pre">pixi</span></code> task:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pixi<span class="w"> </span>run<span class="w"> </span>build-doc</span>
-</pre></div></div><p>The documentation is made of:</p>
-<ul class="simple">
-<li><p>a home page, <code class="docutils literal notranslate"><span class="pre">doc/index.rst</span></code>;</p></li>
-<li><p>an API documentation, <code class="docutils literal notranslate"><span class="pre">doc/api.rst</span></code> in which you should add all public
-objects for which the docstring should be exposed publicly.</p></li>
-<li><p>a User Guide documentation, <code class="docutils literal notranslate"><span class="pre">doc/user_guide.rst</span></code>, containing the narrative
-documentation of your package, to give as much intuition as possible to your
-users.</p></li>
-<li><p>examples which are created in the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder. Each example
-illustrates some usage of the package. the example file name should start by
-<code class="docutils literal notranslate"><span class="pre">plot_*.py</span></code>.</p></li>
-</ul>
-</section>
-<section id="local-testing">
-<h3>Local testing<a class="headerlink" href="#local-testing" title="Link to this heading">#</a></h3>
-<p>To run the tests locally, you can use the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pixi<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span></span>
-</pre></div></div><p>It will use <code class="docutils literal notranslate"><span class="pre">pytest</span></code> under the hood to run the package tests.</p>
-<p>In addition, you have a linter task to check the code consistency in terms of style:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pixi<span class="w"> </span>run<span class="w"> </span>lint</span>
-</pre></div></div></section>
-<section id="activating-the-development-environment">
-<h3>Activating the development environment<a class="headerlink" href="#activating-the-development-environment" title="Link to this heading">#</a></h3>
-<p>In the case that you don’t want to use the <code class="docutils literal notranslate"><span class="pre">pixi</span> <span class="pre">run</span></code> commands and directly interact
-with the usual python tools, you can activate the development environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pixi<span class="w"> </span>shell<span class="w"> </span>-e<span class="w"> </span>dev</span>
-</pre></div></div><p>This will activate an environment containing the dependencies needed to run the linters,
-tests, and build the documentation. So for instance, you can run the tests with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pytest<span class="w"> </span>-vsl<span class="w"> </span>skltemplate</span>
-</pre></div></div><p>In this case, you can even use pre-commit before using git. You will need to initialize
-it with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pre-commit<span class="w"> </span>install</span>
-</pre></div></div></section>
-<section id="setup-the-continuous-integration">
-<h3>Setup the continuous integration<a class="headerlink" href="#setup-the-continuous-integration" title="Link to this heading">#</a></h3>
-<p>The project template already contains configuration files of the continuous
-integration system. It leverage the above pixi commands and run on GitHub Actions.
-In short, it will:</p>
-<ul class="simple">
-<li><p>run the tests on the different platforms (Linux, MacOS, Windows) and upload the
-coverage report to codecov.io;</p></li>
-<li><p>check the code style (linter);</p></li>
-<li><p>build the documentation and deploy it automatically on GitHub Pages.</p></li>
-</ul>
-</section>
-</section>
-<section id="publish-your-package">
-<h2>Publish your package<a class="headerlink" href="#publish-your-package" title="Link to this heading">#</a></h2>
-<p>You can make your package available through <a class="reference external" href="https://packaging.python.org/tutorials/packaging-projects/">PyPi</a> and <a class="reference external" href="https://conda-forge.org/">conda-forge</a>. Refer to
-the associated documentation to be able to upload your packages such that
-it will be installable with <code class="docutils literal notranslate"><span class="pre">pip</span></code> and <code class="docutils literal notranslate"><span class="pre">conda</span></code>.</p>
 </section>
 </section>
 
@@ -508,7 +449,7 @@ it will be installable with <code class="docutils literal notranslate"><span cla
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Project template for <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> extension</p>
+        <p class="prev-next-title">DenMune-Sklearn: Robust Density-Based Clustering</p>
       </div>
     </a>
     <a class="right-next"
@@ -539,17 +480,12 @@ it will be installable with <code class="docutils literal notranslate"><span cla
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-your-own-scikit-learn-contribution-package">Creating your own scikit-learn contribution package</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#download-and-setup-your-repository">Download and setup your repository</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#develop-your-own-scikit-learn-estimators">Develop your own scikit-learn estimators</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-your-local-and-continuous-integration-environment">Managing your local and continuous integration environment</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edit-the-documentation">Edit the documentation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local-testing">Local testing</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#activating-the-development-environment">Activating the development environment</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-the-continuous-integration">Setup the continuous integration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-source">From Source</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#publish-your-package">Publish your package</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-go-next">Where to Go Next</a></li>
 </ul>
   </nav></div>
 

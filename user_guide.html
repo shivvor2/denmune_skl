@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User Guide &#8212; denmune-skl 0.1.dev20+g2ddbfd3c9 documentation</title>
+    <title>User Guide &#8212; denmune-skl 0.1.dev39+g5038ded3a documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=4fa252d6"></script>
+    <script src="_static/documentation_options.js?v=a5528b19"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
@@ -53,10 +53,10 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API Reference" href="api.html" />
-    <link rel="prev" title="Getting started" href="quick_start.html" />
+    <link rel="prev" title="Getting Started" href="quick_start.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.dev20+g2ddbfd3c9" />
+  <meta name="docsearch:version" content="0.1.dev39+g5038ded3a" />
   </head>
   
   
@@ -122,8 +122,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="denmune-skl 0.1.dev20+g2ddbfd3c9 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="denmune-skl 0.1.dev20+g2ddbfd3c9 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="denmune-skl 0.1.dev39+g5038ded3a documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="denmune-skl 0.1.dev39+g5038ded3a documentation - Home"/>
   
   
 </a></div>
@@ -140,7 +140,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="quick_start.html">
-    Getting started
+    Getting Started
   </a>
 </li>
 
@@ -256,7 +256,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="quick_start.html">
-    Getting started
+    Getting Started
   </a>
 </li>
 
@@ -391,7 +391,7 @@ including:</p>
 <ul class="simple">
 <li><p><strong>Lack of Scikit-learn Compatibility</strong>: The legacy class did not inherit from
 <code class="docutils literal notranslate"><span class="pre">BaseEstimator</span></code>, preventing its use in standard scikit-learn tools like
-<code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> and <code class="docutils literal notranslate"><span class="pre">GridSearchCV</span></code>. <a class="reference external" href="[INSERTGITPERMALINKTOYOURdenmune.py]">Our implementation</a>
+<code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> and <code class="docutils literal notranslate"><span class="pre">GridSearchCV</span></code>. Our implementation, <a class="reference internal" href="generated/denmune_skl.DenMune.html#denmune_skl.DenMune" title="denmune_skl.DenMune"><code class="xref py py-class docutils literal notranslate"><span class="pre">DenMune</span></code></a>,
 is a proper scikit-learn estimator.</p></li>
 <li><p><strong>Algorithmic Flaws</strong>: The previous version improperly mixed training and testing data,
 leading to data leakage and invalid evaluation metrics. This implementation adheres to
@@ -412,14 +412,10 @@ two main phases after an initial density estimation.</p>
 <p>The size of the Reference-List, <code class="docutils literal notranslate"><span class="pre">|KNN_p&lt;-|</span></code>, serves as the density score for point <code class="docutils literal notranslate"><span class="pre">p</span></code>.</p>
 <p><strong>2. Phase I: Cluster Skeleton Construction</strong></p>
 <p>Points are classified based on their density:
-- <strong>Strong Points</strong>: Points where <code class="docutils literal notranslate"><span class="pre">|KNN_p&lt;-|</span> <span class="pre">&gt;=</span> <span class="pre">k_nearest</span></code>. These are density peaks and</p>
-<blockquote>
-<div><p>serve as the initial seeds for clusters.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p><strong>Weak Points</strong>: Points where <code class="docutils literal notranslate"><span class="pre">|KNN_p&lt;-|</span> <span class="pre">&lt;</span> <span class="pre">k_nearest</span></code>. These are boundary points or noise.</p></li>
-<li><p><strong>Noise Points</strong>: Points with few or no mutual neighbors.</p></li>
-</ul>
+- <strong>Strong Points</strong>: Points where <code class="docutils literal notranslate"><span class="pre">|KNN_p&lt;-|</span> <span class="pre">&gt;=</span> <span class="pre">k_nearest</span></code>. These are density peaks and
+serve as the initial seeds for clusters.
+- <strong>Weak Points</strong>: Points where <code class="docutils literal notranslate"><span class="pre">|KNN_p&lt;-|</span> <span class="pre">&lt;</span> <span class="pre">k_nearest</span></code>. These are boundary points or noise.
+- <strong>Noise Points</strong>: Points with few or no mutual neighbors.</p>
 <p>The algorithm iterates through the strong points in descending order of density. Each strong
 point forms a new cluster or is merged with an existing cluster skeleton using a
 Union-Find data structure for efficiency. Merging is decided by a majority vote
@@ -444,11 +440,9 @@ investigate this for your dataset as shown in our <a class="reference internal" 
 high-dimensional data (<code class="docutils literal notranslate"><span class="pre">n_features</span> <span class="pre">&gt;</span> <span class="pre">50</span></code> is a common heuristic), it is highly
 recommended to use dimensionality reduction.
 - <strong>`reduce_dims=True`</strong> (default): Will reduce data to <code class="docutils literal notranslate"><span class="pre">target_dims</span></code>.
-- <strong>`dim_reducer`</strong>: Can be set to <code class="docutils literal notranslate"><span class="pre">'tsne'</span></code>, <code class="docutils literal notranslate"><span class="pre">'pca'</span></code>, or a custom estimator instance</p>
-<blockquote>
-<div><p>like UMAP. See the <span class="xref std std-ref">sphx_glr_auto_examples_plot_custom_reducer.py</span> example for
+- <strong>`dim_reducer`</strong>: Can be set to <code class="docutils literal notranslate"><span class="pre">'tsne'</span></code>, <code class="docutils literal notranslate"><span class="pre">'pca'</span></code>, or a custom estimator instance
+like UMAP. See the <span class="xref std std-ref">sphx_glr_auto_examples_plot_custom_reducer.py</span> example for
 how to use a custom reducer.</p>
-</div></blockquote>
 </section>
 </section>
 
@@ -468,7 +462,7 @@ how to use a custom reducer.</p>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Getting started</p>
+        <p class="prev-next-title">Getting Started</p>
       </div>
     </a>
     <a class="right-next"
