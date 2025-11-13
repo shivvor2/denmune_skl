@@ -55,8 +55,8 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 python = ">=3.9"
 scikit-learn = ">=1.6.0"
 
-[tool.pixi.pypi-dependencies]
-denmune-skl = { path=".", editable=true }
+# [tool.pixi.pypi-dependencies]
+# denmune-skl = { path=".", editable=true }
 
 [tool.pixi.feature.lint.dependencies]
 # The version below should be aligned with the one of `.pre-commit-config.yaml`
@@ -73,6 +73,9 @@ lint = { depends-on = ["black", "ruff"]}
 pytest = "*"
 pytest-cov = "*"
 
+[tool.pixi.feature.test.pypi-dependencies]
+denmune-skl = { path = ".", editable = true }
+
 [tool.pixi.feature.test.tasks]
 test = { cmd = "pytest -vsl --cov=denmune_skl --cov-report=xml" }
 
@@ -85,6 +88,9 @@ sphinx = "*"
 sphinx-design = "*"
 sphinx-gallery = "*"
 sphinx-prompt = "*"
+
+[tool.pixi.feature.doc.pypi-dependencies]
+denmune-skl = { path = ".", editable = true }
 
 [tool.pixi.feature.doc.tasks]
 build-doc = { cmd = "make html", cwd = "doc" }

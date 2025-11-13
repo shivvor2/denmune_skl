@@ -194,7 +194,7 @@ def test_sparse_input_handling(blob_data):
     X, y = blob_data
     X_sparse = csr_matrix(X)
 
-    # 1. Invalid case: reduce_dims=True with the default "tsne" reducer. MUST FAIL.
+    # 1. Reduce_dims=True with the default "tsne" reducer. Should raise warning.
     model_warn = DenMune(reduce_dims=True, dim_reducer="tsne")
     warn_msg = "does not support sparse input"
     with pytest.warns(UserWarning, match=warn_msg):
