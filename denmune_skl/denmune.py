@@ -78,7 +78,8 @@ class DenMune(ClusterMixin, BaseEstimator):
     reducer_ : estimator object
         The fitted dimensionality reduction estimator instance. This attribute
         is only set if the `reduce_dims` parameter is True and the number of
-        input features is greater than `target_dims`.
+        input features is greater than `target_dims`. `None` if dimensionality
+        reduction is not performed.
 
     nn_ : NearestNeighbors
         The fitted `NearestNeighbors` instance used to find the k-nearest
@@ -174,8 +175,8 @@ class DenMune(ClusterMixin, BaseEstimator):
         self
             Fitted estimator.
         """
-        # 1. Input validation
 
+        # 1. Input validation
         X = validate_data(self, X=X, accept_sparse=True, dtype=[np.float64, np.float32])
 
         self.n_samples_ = X.shape[0]
@@ -185,6 +186,8 @@ class DenMune(ClusterMixin, BaseEstimator):
             raise ValueError(f"n_samples={self.n_samples_} should be > 1.")
 
         # 2. Dim reduction (if enabled)
+        self.reducer_ = None
+
         if self.reduce_dims:
             if self.metric == "precomputed":
                 raise ValueError(
