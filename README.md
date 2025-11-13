@@ -40,7 +40,7 @@ This project was created to provide a version of DenMune that is:
 ### Installation
 
 ```bash
-pip install denmune_skl
+pip install denmune-skl
 ```
 
 ### Quick Usage
