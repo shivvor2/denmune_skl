@@ -10,8 +10,8 @@
 [![Documentation](https://github.com/shivvor2/denmune_skl/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/shivvor2/denmune_skl/actions/workflows/deploy-gh-pages.yml)
 [![Dependabot Updates](https://github.com/shivvor2/denmune_skl/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/shivvor2/denmune_skl/actions/workflows/dependabot/dependabot-updates)
 <!-- Package version, need to upload to pypi later -->
-[![PyPI version](https://badge.fury.io/py/denmune-skl.svg)](https://badge.fury.io/py/denmune-skl) <!-- Change package name to sklearn-contrib-denmune when accepted (?) -->
-<!-- License -->
+[![PyPI version](https://badge.fury.io/py/denmune-skl.svg?icon=si%3Apython)](https://badge.fury.io/py/denmune-skl)
+
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 An efficient, scikit-learn compatible implementation of the "DENMUNE: Density peak based clustering using mutual nearest neighbors" algorithm.
