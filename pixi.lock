@@ -2479,14 +2479,13 @@ packages:
   timestamp: 1747855126005
 - pypi: ./
   name: denmune-skl
-  version: 0.1.dev41+g560c65132.d20251113
-  sha256: be6bd9e32e74d52c9671b31ce444d31d5019cf5dbb643b916b733f893e3700e0
+  version: 0.1.2.dev1+g8480fd70a.d20251116
+  sha256: 28dd3f773406dff5192410de2fd489d81c7ff47f91e92fa1752f0f796df0aaf9
   requires_dist:
   - numpy
   - scipy
   - scikit-learn
   requires_python: '>=3.9'
-  editable: true
 - conda: https://conda.anaconda.org/conda-forge/noarch/distlib-0.4.0-pyhd8ed1ab_0.conda
   sha256: 6d977f0b2fc24fee21a9554389ab83070db341af6d6f09285360b2e09ef8b26e
   md5: 003b8ba0a94e2f1e117d0bd46aebc901
