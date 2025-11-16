@@ -74,7 +74,7 @@ pytest = "*"
 pytest-cov = "*"
 
 [tool.pixi.feature.test.pypi-dependencies]
-denmune-skl = { path = ".", editable = true }
+denmune-skl = { path = "." }
 
 [tool.pixi.feature.test.tasks]
 test = { cmd = "pytest -vsl --cov=denmune_skl --cov-report=xml" }
@@ -90,7 +90,7 @@ sphinx-gallery = "*"
 sphinx-prompt = "*"
 
 [tool.pixi.feature.doc.pypi-dependencies]
-denmune-skl = { path = ".", editable = true }
+denmune-skl = { path = "." }
 
 [tool.pixi.feature.doc.tasks]
 build-doc = { cmd = "make html", cwd = "doc" }
